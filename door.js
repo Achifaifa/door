@@ -6,13 +6,14 @@ ctx.canvas.height=600;
 ctx.fillStyle="white"
 ctx.font="15px sans-serif";
 
-var statusd={"light":0, "keys":1, "lid":0};
+var statusd={"light":0, "keys":1, "lid":0, "lock_open":0};
 var last_click="none";
 var current_frame="door";
 var processed=0
 
 function menu(){
 
+  ctx.clearRect(0,0,800,600);
   ctx.drawImage(door_001,0,30);
   c.addEventListener("mousedown",lope,false)
 
@@ -60,7 +61,8 @@ function lope(ev){
       ctx.clearRect(0,0,800,600);
       var imagename=current_frame+"_"+statusd.light+statusd.lid+statusd.keys;
       ctx.drawImage(eval(imagename),0,30);
-      if (statusd.keys==0){console.log("Lock opened"); writemessage("Used keys on lock")};
+      if (statusd.keys==0 && statusd.lock_open==1){console.log("It's already open"); writemessage("It's unlocked")}
+      if (statusd.keys==0 && statusd.lock_open==0){console.log("Lock opened"); writemessage("Used keys on lock");statusd.lock_open=1;};
       if (statusd.keys==1){console.log("You need the keys"); writemessage("It's locked")};
       processed=1;
     }  
@@ -154,36 +156,59 @@ function writeinventory(){
 }
 
 function writemessage(string){
+
   ctx.fillText(string,20,585)
 
 }
-door_000=new Image();
-door_000.src="./images/door_000.png";
-door_001=new Image();
-door_001.src="./images/door_001.png";
-door_010=new Image();
-door_010.src="./images/door_010.png";
-door_011=new Image();
-door_011.src="./images/door_011.png";
-door_100=new Image();
-door_100.src="./images/door_100.png";
-door_101=new Image();
-door_101.src="./images/door_101.png";
-door_110=new Image();
-door_110.src="./images/door_110.png";
-door_111=new Image();
-door_111.src="./images/door_111.png";
-panel_00=new Image();
-panel_00.src="./images/panel_00.png";
-panel_01=new Image();
-panel_01.src="./images/panel_01.png";
-panel_10=new Image();
-panel_10.src="./images/panel_10.png";
-panel_11=new Image();
-panel_11.src="./images/panel_11.png";
-hole_0=new Image();
-hole_0.src="./images/hole_0.png";
-hole_1=new Image();
-hole_1.src="./images/hole_1.png";
 
-menu();
+function loader(items, allDone) {
+
+  // Return nothing if the item list is empty
+  if (!items) {return;}
+  // I don't know what this does
+  if ("undefined"===items.length) {items=[items];}
+  var count=items.length;
+  // Action every time a image loads
+  var thingToDoCompleted=function (items, i) {
+    count--;
+    if (count==0) {allDone();}
+    else {
+      ctx.clearRect(0,0,800,600);
+      ctx.fillText("Loading image "+(items.length-count)+" of "+items.length,300,300);
+    }};
+  // Actual loading loop?
+  for (var i=0; i<items.length; i++) {
+    loadImage(items, i, thingToDoCompleted);}}
+
+function loadImage(items, n, onComplete) {
+
+  var onLoad=function (e) {
+    e.target.removeEventListener("load", onLoad);
+    onComplete(items, n);}
+
+  // Defining variable name
+  photoname=items[n].replace("./images/","").replace(".png","");
+  // Create object and specify source
+  eval(photoname+"=new Image()");
+  eval(photoname+".addEventListener('load', onLoad, false)");
+  eval(photoname+".src=items[n]");
+}
+
+items=[
+"./images/door_000.png",
+"./images/door_001.png",
+"./images/door_010.png",
+"./images/door_011.png",
+"./images/door_100.png",
+"./images/door_101.png",
+"./images/door_110.png",
+"./images/door_111.png",
+"./images/panel_00.png",
+"./images/panel_01.png",
+"./images/panel_10.png",
+"./images/panel_11.png",
+"./images/hole_0.png",
+"./images/hole_1.png"]
+
+loader(items, menu);
+console.log("Images loaded"); 
