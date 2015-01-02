@@ -161,6 +161,31 @@ function writemessage(string){
 
 }
 
+//Loader
+
+// Resource list
+items=[
+"./images/door_000.png",
+"./images/door_001.png",
+"./images/door_010.png",
+"./images/door_011.png",
+"./images/door_100.png",
+"./images/door_101.png",
+"./images/door_110.png",
+"./images/door_111.png",
+"./images/panel_00.png",
+"./images/panel_01.png",
+"./images/panel_10.png",
+"./images/panel_11.png",
+"./images/hole_0.png",
+"./images/hole_1.png"];
+
+// Loader specification
+spin=2*Math.PI;
+itemincrement=spin/items.length;
+ctx.lineWidth=5; ctx.strokeStyle="#FABADA";
+x=400; y=300; decpath=false; startrad=3*(Math.PI/2);
+
 function loader(items, allDone) {
 
   // Return nothing if the item list is empty
@@ -174,7 +199,11 @@ function loader(items, allDone) {
     if (count==0) {allDone();}
     else {
       ctx.clearRect(0,0,800,600);
-      ctx.fillText("Loading image "+(items.length-count)+" of "+items.length,300,300);
+      ctx.beginPath();
+      ctx.arc(x,y,50,startrad,startrad+itemincrement*(items.length-count),false);
+      ctx.stroke();
+      ctx.fillText((items.length-count)+"/"+items.length,x-20,y+5);
+
     }};
   // Actual loading loop?
   for (var i=0; i<items.length; i++) {
@@ -193,22 +222,6 @@ function loadImage(items, n, onComplete) {
   eval(photoname+".addEventListener('load', onLoad, false)");
   eval(photoname+".src=items[n]");
 }
-
-items=[
-"./images/door_000.png",
-"./images/door_001.png",
-"./images/door_010.png",
-"./images/door_011.png",
-"./images/door_100.png",
-"./images/door_101.png",
-"./images/door_110.png",
-"./images/door_111.png",
-"./images/panel_00.png",
-"./images/panel_01.png",
-"./images/panel_10.png",
-"./images/panel_11.png",
-"./images/hole_0.png",
-"./images/hole_1.png"]
 
 loader(items, menu);
 console.log("Images loaded"); 
