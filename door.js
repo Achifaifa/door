@@ -146,19 +146,16 @@ function updateMousePosition(ev) {
 
   last_click=[ev.clientX-c.offsetLeft+window.scrollX,ev.clientY+window.scrollY-c.offsetTop];
   console.log("Click on "+current_frame+" frame",last_click[0],last_click[1]);
-  
 }
 
 function writeinventory(){
 
   if (statusd.keys==0){ctx.fillText("[Keys]",745,585);}
-
 }
 
 function writemessage(string){
 
   ctx.fillText(string,20,585)
-
 }
 
 //Loader
@@ -190,23 +187,23 @@ function loader(items, allDone) {
 
   // Return nothing if the item list is empty
   if (!items) {return;}
-  // I don't know what this does
   if ("undefined"===items.length) {items=[items];}
-  var count=items.length;
   // Action every time a image loads
-  var thingToDoCompleted=function (items, i) {
+    var count=items.length;
+    var thingToDoCompleted=function (items, i) {
     count--;
+    // If all items loaded, launch specified function
     if (count==0) {allDone();}
+    // If not, draw loading bar+message
     else {
       ctx.clearRect(0,0,800,600);
       ctx.beginPath();
       ctx.arc(x,y,50,startrad,startrad+itemincrement*(items.length-count),false);
       ctx.stroke();
       ctx.fillText((items.length-count)+"/"+items.length,x-20,y+5);
-
     }};
-  // Actual loading loop?
-  for (var i=0; i<items.length; i++) {
+  // Actual loading loop
+  for (var i=0; i<items.length; i++){
     loadImage(items, i, thingToDoCompleted);}}
 
 function loadImage(items, n, onComplete) {
@@ -218,6 +215,7 @@ function loadImage(items, n, onComplete) {
   // Defining variable name
   photoname=items[n].replace("./images/","").replace(".png","");
   // Create object and specify source
+  // No var is used to it's created as a global object attribute
   eval(photoname+"=new Image()");
   eval(photoname+".addEventListener('load', onLoad, false)");
   eval(photoname+".src=items[n]");
